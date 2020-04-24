@@ -40,7 +40,7 @@ Demonstrate your understanding of this week's concepts by answering the followin
 
 - [ ] What is the purpose of using _sessions_?
 
-        Sessions allow the user to view potentially restricted resources without a login and they can be timed.
+        Sessions allow the user to view potentially restricted resources with a login and they can be timed.
 
 - [ ] What does bcrypt do to help us store passwords in a secure manner.
 
