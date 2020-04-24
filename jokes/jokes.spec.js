@@ -1,17 +1,45 @@
 const request = require("supertest");
 const server = require("../api/server");
+const db = require("../database/dbConfig.js");
 
 describe("GET /api/jokes", () => {
+  beforeEach(async () => {
+    await db("users").truncate();
+  });
+
   it("Return 200 on success", () => {
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoibWUiLCJpYXQiOjE1ODc3NTc5NjEsImV4cCI6MTU4Nzg0NDM2MX0.hqrdnOwZDQqlz1NnJIlRODLmGcyQZ8yqK6qPkI7hZoc";
-    return request(server)
-      .get("/api/jokes")
-      .set("Authorization", token)
+    request(server)
+      .post("/api/auth/register")
+      .send({ username: "myself", password: "pass" });
+
+    request(server)
+      .post("/api/auth/login")
+      .send({ username: "myself", password: "pass" })
       .then((res) => {
-        expect(res.status).toBe(200);
+        return request(server)
+          .get("/api/jokes")
+          .set("Authorization", res.token)
+          .then((res) => {
+            expect(res.status).toBe(200);
+          });
       });
   });
+
+  //   it("Return 200 on success", async () => {
+  //     await request(server)
+  //       .post("/api/auth/register")
+  //       .send({ username: "myself", password: "pass" });
+
+  //     const { token } = await request(server)
+  //       .post("/api/auth/login")
+  //       .send({ username: "myself", password: "pass" });
+
+  //     const res = await request(server)
+  //       .get("/api/jokes")
+  //       .set("Authorization", token);
+
+  //     expect(res.status).toBe(200);
+  //   });
 
   it("Return 401 on failure", () => {
     const token = "abc";
